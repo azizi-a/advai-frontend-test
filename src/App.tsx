@@ -1,5 +1,5 @@
 // src/App.tsx - WORKING SIMPLIFIED VERSION
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { 
   TrendingUp, 
   DollarSign, 
