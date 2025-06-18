@@ -20,6 +20,15 @@ import { SearchFilter } from "./components/filters/SearchFilter";
 import { DateRangePicker } from "./components/filters/DateRangePicker";
 import { MultiSelectFilter } from "./components/filters/MultiSelectFilter";
 import { ClearFiltersButton } from "./components/filters/ClearFiltersButton";
+import { MetricCard } from "./components/dashboard/MetricCard";
+import { SalesTrendChart } from "./components/charts/SalesTrendChart";
+import { CategorySalesChart } from "./components/charts/CategorySalesChart";
+import { RegionRevenueChart } from "./components/charts/RegionRevenueChart";
+import {
+  getMonthlyData,
+  getCategoryData,
+  getRegionData,
+} from "./utils/dataUtils";
 
 const initialFilters: FilterState = {
   dateRange: { startDate: "", endDate: "" },
@@ -55,12 +64,12 @@ function App() {
     setFilters(initialFilters);
   };
 
-  const formatCurrency = (value: number): string => {
+  const formatCurrency = (value: number | string): string => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 2,
-    }).format(value);
+    }).format(Number(value));
   };
 
   return (
@@ -84,73 +93,29 @@ function App() {
 
         {/* Metrics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* Total Sales */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-500 mb-1">
-                  Total Sales
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {formatCurrency(metrics.totalSales)}
-                </p>
-              </div>
-              <div className="p-3 rounded-lg bg-gray-50">
-                <DollarSign className="w-6 h-6 text-green-600" />
-              </div>
-            </div>
-          </div>
-
-          {/* Total Orders */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-500 mb-1">
-                  Total Orders
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {metrics.totalOrders}
-                </p>
-              </div>
-              <div className="p-3 rounded-lg bg-gray-50">
-                <ShoppingCart className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </div>
-
-          {/* Average Order Value */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-500 mb-1">
-                  Avg Order Value
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {formatCurrency(metrics.averageOrderValue)}
-                </p>
-              </div>
-              <div className="p-3 rounded-lg bg-gray-50">
-                <Package className="w-6 h-6 text-purple-600" />
-              </div>
-            </div>
-          </div>
-
-          {/* Top Month */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-500 mb-1">
-                  Top Month
-                </p>
-                <p className="text-lg font-bold text-gray-900">
-                  {metrics.topPerformingMonth}
-                </p>
-              </div>
-              <div className="p-3 rounded-lg bg-gray-50">
-                <TrendingUp className="w-6 h-6 text-orange-600" />
-              </div>
-            </div>
-          </div>
+          <MetricCard
+            icon={DollarSign}
+            title="Total Sales"
+            value={metrics.totalSales}
+            formatValue={formatCurrency}
+          />
+          <MetricCard
+            icon={ShoppingCart}
+            title="Total Orders"
+            value={metrics.totalOrders}
+            formatValue={(value) => value.toLocaleString()}
+          />
+          <MetricCard
+            icon={Package}
+            title="Avg Order Value"
+            value={metrics.averageOrderValue}
+            formatValue={formatCurrency}
+          />
+          <MetricCard
+            icon={TrendingUp}
+            title="Top Month"
+            value={metrics.topPerformingMonth}
+          />
         </div>
 
         {/* Main Layout */}
@@ -258,7 +223,7 @@ function App() {
           {/* Main Content */}
           <div className="lg:col-span-3">
             <div className="space-y-6">
-              {/* Monthly Sales Chart */}
+              {/* Monthly Sales Trend */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center gap-2 mb-6">
                   <LineChart className="w-5 h-5 text-gray-600" />
@@ -266,17 +231,7 @@ function App() {
                     Monthly Sales Trend
                   </h3>
                 </div>
-                <div className="h-80 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg">
-                  <div className="text-center">
-                    <LineChart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500 font-medium">
-                      Line Chart Implementation
-                    </p>
-                    <p className="text-sm text-gray-400">
-                      Use Recharts LineChart component
-                    </p>
-                  </div>
-                </div>
+                <SalesTrendChart data={getMonthlyData(filteredData)} />
               </div>
 
               {/* Secondary Charts */}
@@ -288,14 +243,8 @@ function App() {
                       Sales by Category
                     </h3>
                   </div>
-                  <div className="h-64 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg">
-                    <div className="text-center">
-                      <BarChart3 className="w-10 h-10 text-gray-400 mx-auto mb-2" />
-                      <p className="text-gray-500 text-sm">Bar Chart</p>
-                    </div>
-                  </div>
+                  <CategorySalesChart data={getCategoryData(filteredData)} />
                 </div>
-
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                   <div className="flex items-center gap-2 mb-6">
                     <PieChart className="w-5 h-5 text-gray-600" />
@@ -303,12 +252,10 @@ function App() {
                       Revenue by Region
                     </h3>
                   </div>
-                  <div className="h-64 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg">
-                    <div className="text-center">
-                      <PieChart className="w-10 h-10 text-gray-400 mx-auto mb-2" />
-                      <p className="text-gray-500 text-sm">Pie Chart</p>
-                    </div>
-                  </div>
+                  <RegionRevenueChart
+                    data={getRegionData(filteredData)}
+                    variant="donut"
+                  />
                 </div>
               </div>
             </div>
