@@ -118,8 +118,7 @@ export function DataTable<T extends Record<string, unknown>>({
   }
 
   return (
-    <div
-      className={`bg-white rounded-lg shadow-sm border border-gray-200 ${className}`}>
+    <div className={`bg-white rounded-lg ${className}`}>
       <div className="p-4 border-b border-gray-200">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

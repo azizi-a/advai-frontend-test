@@ -5,7 +5,6 @@ import {
   DollarSign,
   ShoppingCart,
   Package,
-  Search,
   Filter,
   LineChart,
   BarChart3,
@@ -30,6 +29,7 @@ import {
   getCategoryData,
   getRegionData,
 } from "./utils/dataUtils";
+import { ActiveFiltersSummary } from "./components/filters/ActiveFiltersSummary";
 
 const initialFilters: FilterState = {
   dateRange: { startDate: "", endDate: "" },
@@ -197,41 +197,15 @@ function App() {
                 disabled={!hasActiveFilters}
                 loading={false}
               />
-            </div>
 
-            {/* Active Filters Summary */}
-            {hasActiveFilters && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mt-6">
-                <h3 className="text-sm font-medium text-gray-900 mb-2">
-                  Active Filters
-                </h3>
-                <div className="flex flex-wrap gap-1 mb-2">
-                  {filters.searchTerm && (
-                    <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                      Search: {filters.searchTerm}
-                    </span>
-                  )}
-                  {filters.categories.map((category) => (
-                    <span
-                      key={category}
-                      className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
-                      {category}
-                    </span>
-                  ))}
-                  {filters.regions.map((region) => (
-                    <span
-                      key={region}
-                      className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
-                      {region}
-                    </span>
-                  ))}
-                </div>
-                <p className="text-xs text-gray-500">
-                  Showing {filteredData.length} of {mockSalesData.length}{" "}
-                  records
-                </p>
-              </div>
-            )}
+              {hasActiveFilters && (
+                <ActiveFiltersSummary
+                  filters={filters}
+                  resultCount={filteredData.length}
+                  totalCount={mockSalesData.length}
+                />
+              )}
+            </div>
           </div>
 
           {/* Main Content */}
