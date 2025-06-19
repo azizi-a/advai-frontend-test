@@ -7,11 +7,15 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Cell,
 } from "recharts";
 import { Card } from "../ui/Card";
 import { ChartPlaceholder } from "./ChartPlaceholder";
 import { LayoutGrid } from "lucide-react";
 import { CategoryData } from "../../types";
+import { CATEGORY_COLORS } from "../../constants/categoryColors";
+
+const CATEGORY_ORDER = Object.keys(CATEGORY_COLORS);
 
 interface CategorySalesChartProps {
   data: CategoryData[];
@@ -80,7 +84,10 @@ export const CategorySalesChart: React.FC<CategorySalesChartProps> = ({
     }).format(value);
   };
 
-  const sortedData = [...data].sort((a, b) => b.revenue - a.revenue);
+  const orderedData = [...data].sort(
+    (a, b) =>
+      CATEGORY_ORDER.indexOf(a.category) - CATEGORY_ORDER.indexOf(b.category)
+  );
 
   return (
     <Card className={className}>
@@ -90,7 +97,7 @@ export const CategorySalesChart: React.FC<CategorySalesChartProps> = ({
       <div className={height}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            data={sortedData}
+            data={orderedData}
             layout="vertical"
             margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
             barGap={2}
@@ -130,10 +137,15 @@ export const CategorySalesChart: React.FC<CategorySalesChartProps> = ({
             <Bar
               dataKey="revenue"
               name="Revenue"
-              fill="#3b82f6"
               radius={[0, 4, 4, 0]}
-              animationDuration={1000}
-            />
+              animationDuration={1000}>
+              {orderedData.map((entry) => (
+                <Cell
+                  key={`cell-${entry.category}`}
+                  fill={CATEGORY_COLORS[entry.category] || "#888"}
+                />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>

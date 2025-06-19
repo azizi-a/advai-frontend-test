@@ -1,5 +1,10 @@
 import React, { useState, useMemo } from "react";
 import { ChevronUp, ChevronDown, Search, LoaderCircle } from "lucide-react";
+import {
+  CATEGORY_BG_COLORS,
+  CATEGORY_COLORS,
+} from "../../constants/categoryColors";
+import { Badge } from "../ui";
 
 type SortDirection = "asc" | "desc" | null;
 
@@ -173,9 +178,24 @@ export function DataTable<T extends Record<string, unknown>>({
                     <td
                       key={`${column.field as string}-${rowIndex}`}
                       className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {column.valueFormatter
-                        ? column.valueFormatter(row[column.field], row)
-                        : String(row[column.field] ?? "")}
+                      {column.field !== "category" &&
+                        (column.valueFormatter
+                          ? column.valueFormatter(row[column.field], row)
+                          : String(row[column.field] ?? ""))}
+                      {column.field === "category" && (
+                        <Badge
+                          style={{
+                            backgroundColor:
+                              CATEGORY_BG_COLORS[row.category as string] ||
+                              "#e5e7eb",
+                            color:
+                              CATEGORY_COLORS[row.category as string] ||
+                              "#374151",
+                            fontWeight: 500,
+                          }}>
+                          {row.category as string}
+                        </Badge>
+                      )}
                     </td>
                   ))}
                 </tr>
