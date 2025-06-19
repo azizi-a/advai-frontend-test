@@ -1,5 +1,3 @@
-// src/App.tsx - WORKING SIMPLIFIED VERSION
-import { useState, useMemo } from "react";
 import {
   TrendingUp,
   DollarSign,
@@ -11,10 +9,9 @@ import {
   PieChart,
 } from "lucide-react";
 
-// Import your data and types
+import { useFilters } from "./hooks/useFilters";
+import { useDashboardMetrics } from "./hooks/useDashboardMetrics";
 import { mockSalesData } from "./data/mockSalesData";
-import { FilterState } from "./types";
-import { applyFilters, calculateMetrics } from "./utils/dataUtils";
 import { SearchFilter } from "./components/filters/SearchFilter";
 import { DateRangePicker } from "./components/filters/DateRangePicker";
 import { MultiSelectFilter } from "./components/filters/MultiSelectFilter";
@@ -31,39 +28,14 @@ import {
 } from "./utils/dataUtils";
 import { ActiveFiltersSummary } from "./components/filters/ActiveFiltersSummary";
 
-const initialFilters: FilterState = {
-  dateRange: { startDate: "", endDate: "" },
-  categories: [],
-  regions: [],
-  searchTerm: "",
-};
-
 const categoryOptions = ["Electronics", "Clothing", "Books", "Home", "Sports"];
 const regionOptions = ["North", "South", "East", "West"];
 
 function App() {
-  const [filters, setFilters] = useState<FilterState>(initialFilters);
+  const { filters, setFilters, filteredData, hasActiveFilters, clearFilters } =
+    useFilters(mockSalesData);
 
-  const filteredData = useMemo(
-    () => applyFilters(mockSalesData, filters),
-    [filters]
-  );
-
-  const metrics = useMemo(() => calculateMetrics(filteredData), [filteredData]);
-
-  const hasActiveFilters = useMemo(() => {
-    return (
-      filters.searchTerm ||
-      filters.dateRange.startDate ||
-      filters.dateRange.endDate ||
-      filters.categories.length > 0 ||
-      filters.regions.length > 0
-    );
-  }, [filters]);
-
-  const handleClearFilters = () => {
-    setFilters(initialFilters);
-  };
+  const metrics = useDashboardMetrics(filteredData);
 
   const formatCurrency = (value: number | string): string => {
     return new Intl.NumberFormat("en-US", {
@@ -193,7 +165,7 @@ function App() {
               />
 
               <ClearFiltersButton
-                onClick={handleClearFilters}
+                onClick={clearFilters}
                 disabled={!hasActiveFilters}
                 loading={false}
               />
