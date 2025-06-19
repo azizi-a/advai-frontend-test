@@ -27,6 +27,8 @@ import {
   getRegionData,
 } from "./utils/dataUtils";
 import { ActiveFiltersSummary } from "./components/filters/ActiveFiltersSummary";
+import { SaleRecord } from "./types";
+import { ColumnDef } from "./components/dashboard/DataTable";
 
 const categoryOptions = ["Electronics", "Clothing", "Books", "Home", "Sports"];
 const regionOptions = ["North", "South", "East", "West"];
@@ -45,8 +47,8 @@ function App() {
     }).format(Number(value));
   };
 
-  const columns = [
-    { field: "date", headerName: "Date", sortable: true, width: 120 },
+  const columns: ColumnDef<SaleRecord>[] = [
+    { field: "date", headerName: "Date", sortable: true, width: "8em" },
     { field: "customerName", headerName: "Customer", sortable: true },
     { field: "productName", headerName: "Product", sortable: true },
     { field: "category", headerName: "Category", sortable: true },

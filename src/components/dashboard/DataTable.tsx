@@ -9,7 +9,7 @@ import formatDate from "../../utils/formatDate";
 
 type SortDirection = "asc" | "desc" | null;
 
-interface ColumnDef<T> {
+export interface ColumnDef<T> {
   field: keyof T;
   headerName: string;
   width?: string;
@@ -18,7 +18,7 @@ interface ColumnDef<T> {
   valueFormatter?: (value: any, row: T) => React.ReactNode;
 }
 
-interface DataTableProps<T> {
+interface DataTableProps<T extends object> {
   data: T[];
   columns: ColumnDef<T>[];
   loading?: boolean;
@@ -27,7 +27,7 @@ interface DataTableProps<T> {
   onRowClick?: (row: T) => void;
 }
 
-export function DataTable<T extends Record<string, unknown>>({
+export function DataTable<T extends object>({
   data,
   columns,
   loading = false,
@@ -185,21 +185,21 @@ export function DataTable<T extends Record<string, unknown>>({
                           : String(row[column.field] ?? ""))}
                       {column.field === "date" && (
                         <span className="text-gray-500">
-                          {formatDate(row.date as string)}
+                          {formatDate(row[column.field] as string)}
                         </span>
                       )}
                       {column.field === "category" && (
                         <Badge
                           style={{
                             backgroundColor:
-                              CATEGORY_BG_COLORS[row.category as string] ||
+                              CATEGORY_BG_COLORS[row[column.field] as string] ||
                               "#e5e7eb",
                             color:
-                              CATEGORY_COLORS[row.category as string] ||
+                              CATEGORY_COLORS[row[column.field] as string] ||
                               "#374151",
                             fontWeight: 500,
                           }}>
-                          {row.category as string}
+                          {row[column.field] as string}
                         </Badge>
                       )}
                     </td>
