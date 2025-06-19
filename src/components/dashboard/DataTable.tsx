@@ -5,6 +5,7 @@ import {
   CATEGORY_COLORS,
 } from "../../constants/categoryColors";
 import { Badge } from "../ui";
+import formatDate from "../../utils/formatDate";
 
 type SortDirection = "asc" | "desc" | null;
 
@@ -178,10 +179,15 @@ export function DataTable<T extends Record<string, unknown>>({
                     <td
                       key={`${column.field as string}-${rowIndex}`}
                       className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {column.field !== "category" &&
+                      {!["category", "date"].includes(column.field as string) &&
                         (column.valueFormatter
                           ? column.valueFormatter(row[column.field], row)
                           : String(row[column.field] ?? ""))}
+                      {column.field === "date" && (
+                        <span className="text-gray-500">
+                          {formatDate(row.date as string)}
+                        </span>
+                      )}
                       {column.field === "category" && (
                         <Badge
                           style={{
