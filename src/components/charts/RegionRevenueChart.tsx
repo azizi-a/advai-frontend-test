@@ -9,6 +9,7 @@ import {
   LegendProps,
   TooltipProps,
 } from "recharts";
+import { ContentType } from "recharts/types/component/DefaultLegendContent";
 import { Card } from "../ui/Card";
 import { ChartPlaceholder } from "./ChartPlaceholder";
 import { MapPin } from "lucide-react";
@@ -27,14 +28,6 @@ interface CustomTooltipProps extends TooltipProps<number, string> {
   active?: boolean;
   payload?: {
     payload: RegionData;
-  }[];
-}
-
-interface CustomLegendProps extends LegendProps {
-  payload?: {
-    value: string;
-    color?: string;
-    payload: RegionData & { strokeDasharray?: string | number };
   }[];
 }
 
@@ -120,14 +113,14 @@ export const RegionRevenueChart: React.FC<RegionRevenueChartProps> = ({
   };
 
   // Custom legend formatter to include percentage
-  const renderLegend = (props: CustomLegendProps) => {
+  const renderLegend: React.FC<LegendProps> = (props) => {
     const { payload } = props;
     if (!payload) return null;
 
     return (
       <div className="flex flex-wrap justify-center gap-4 mt-4">
         {payload.map((entry, index) => {
-          const data = entry.payload as RegionData;
+          const data = entry.payload as unknown as RegionData;
           const color = entry.color || COLORS[index % COLORS.length];
           return (
             <div
@@ -211,7 +204,10 @@ export const RegionRevenueChart: React.FC<RegionRevenueChartProps> = ({
               ))}
             </Pie>
             <Tooltip content={<CustomTooltip />} />
-            <Legend verticalAlign="bottom" content={renderLegend} />
+            <Legend
+              verticalAlign="bottom"
+              content={renderLegend as unknown as ContentType}
+            />
           </PieChart>
         </ResponsiveContainer>
       </div>

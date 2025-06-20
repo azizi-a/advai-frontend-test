@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Calendar } from "lucide-react";
 
 interface DateRangePickerProps {
@@ -22,8 +21,6 @@ export function DateRangePicker({
   className = "",
   error = null,
 }: DateRangePickerProps) {
-  const [activeInput, setActiveInput] = useState<"start" | "end" | null>(null);
-
   const handleDateChange = (type: "start" | "end", date: string) => {
     if (type === "start") {
       onStartDateChange(date);
@@ -52,8 +49,6 @@ export function DateRangePicker({
           value={startDate}
           onChange={(e) => handleDateChange("start", e.target.value)}
           disabled={disabled || loading}
-          onFocus={() => setActiveInput("start")}
-          onBlur={() => setActiveInput(null)}
         />
         <input
           type="date"
@@ -68,8 +63,6 @@ export function DateRangePicker({
           value={endDate}
           onChange={(e) => handleDateChange("end", e.target.value)}
           disabled={disabled || loading}
-          onFocus={() => setActiveInput("end")}
-          onBlur={() => setActiveInput(null)}
         />
       </div>
       {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
